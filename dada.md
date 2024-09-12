@@ -98,69 +98,33 @@ sorting semantics to the `C` collation except with `UTF-8` encoding rather than
 `SQL_ASCII`. Using this new collation provider guarantees that your text-based
 queries will return the same sorted results regardless of where you run
 PostgreSQL.
+-------------------------------------------
 
-### Logical replication enhancements for high availability and major version upgrades
+### 고가용성과 주요 버전 업그레이드를 위한 논리적 복제의 향상된 기능들
 
-[Logical replication](https://www.postgresql.org/docs/17/logical-replication.html)
-is used to stream data in real-time across many use cases. However, prior to
-this release, users who wanted to perform a major version upgrade would have to
-drop [logical replication slots](https://www.postgresql.org/docs/17/logical-replication-subscription.html#LOGICAL-REPLICATION-SUBSCRIPTION-SLOT), which requires resynchronizing data
-to subscribers after an upgrade. Starting with upgrades from PostgreSQL 17,
-users don't have to drop logical replication slots, simplifying the upgrade
-process when using logical replication.
+[논리적 복제](https://www.postgresql.org/docs/17/logical-replication.html)는 다양한 사용 사례에서 데이터를 실시간으로 스트리밍하는 데 사용됩니다. 그러나 이번 릴리스 이전에는, 주요 버전 업그레이드를 수행하려는 사용자들이 [logical replication slots](https://www.postgresql.org/docs/17/logical-replication-subscription.html#LOGICAL-REPLICATION-SUBSCRIPTION-SLOT)을 삭제해야 했고, 이로 인해 업그레이드 후 구독자들에게 데이터를 다시 동기화해야 하는 번거로움이 있었습니다. 하지만 PostgreSQL 17부터는 주요 버전 업그레이드 시 logical replication slots을 삭제할 필요가 없어졌습니다. 이로 인해 논리 복제를 사용할 때 업그레이드 프로세스가 간소화되었습니다.
 
-PostgreSQL 17 now includes failover control for logical replication, making it
-more resilient when deployed in high availability environments. Additionally,
-PostgreSQL 17 introduces the
-[`pg_createsubscriber`](https://www.postgresql.org/docs/17/app-pgcreatesubscriber.html)
-command-line tool for converting a physical replica into a new logical replica.
+PostgreSQL 17은 논리적 복제를 위한 장애 조치(failover) 제어 기능을 포함하여, 고가용성 환경에서 배포될 때 더욱 탄력적으로 운영될 수 있도록 개선되었습니다. 또한, PostgreSQL 17에서는 물리적 복제본(physical replica)을 새로운 논리적 복제본(logical replica)으로 변환하는 [`pg_createsubscriber`](https://www.postgresql.org/docs/17/app-pgcreatesubscriber.html) 명령어 도구도 도입되었습니다.
 
-### More options for managing security and operations
+### 보안 및 운영 관리를 위한 다양한 옵션
 
-PostgreSQL 17 further extends how users can manage the overall lifecycle of
-their database systems. PostgreSQL has a new TLS option, `sslnegotiation`, that
-lets users perform a direct TLS handshakes when using
-[ALPN](https://en.wikipedia.org/wiki/Application-Layer_Protocol_Negotiation)
-(registered as `postgresql` in the ALPN directory). PostgreSQL 17 also adds the
-`pg_maintain` [predefined role](https://www.postgresql.org/docs/17/predefined-roles.html),
-which gives users permission to perform maintenance operations.
+PostgreSQL 17은 사용자가 데이터베이스 시스템의 전체 라이프사이클을 관리할 수 있는 방법을 더욱 확장시켰습니다. PostgreSQL에는 새로운 TLS 옵션인 sslnegotiation이 있습니다. 이 옵션을 통해 [ALPN](https://en.wikipedia.org/wiki/Application-Layer_Protocol_Negotiation) (ALPN 디렉토리에 postgresql로 등록되어있음)을 사용할 때 사용자가 직접 TLS handshake를 수행할 수 있습니다.  PostgreSQL 17은 또한 사용자가 데이터베이스의 유지 관리 작업을 수행할 수 있는 권한을 가진 `pg_maintain`이라는 [predefined role](https://www.postgresql.org/docs/17/predefined-roles.html)을 새로 추가했습니다.
 
-[`pg_basebackup`](https://www.postgresql.org/docs/17/app-pgbasebackup.html), the
-backup utility included in PostgreSQL, now supports incremental backups and adds
-the [`pg_combinebackup`](https://www.postgresql.org/docs/17/app-pgcombinebackup.html) 
-utility to reconstruct a full backup. Additionally,
-[`pg_dump`](https://www.postgresql.org/docs/17/app-pgdump.html) includes a new
-option called `--filter` that lets you select what objects to include when
-generating a dump file.
+[`pg_basebackup`](https://www.postgresql.org/docs/17/app-pgbasebackup.html)은 PostgreSQL에 포함된 백업 유틸리티로, 현재 증분 백업을 지원하며, 전체 백업을 재구성할 수 있는 [`pg_combinebackup`](https://www.postgresql.org/docs/17/app-pgcombinebackup.html) 유틸리티가 추가되었습니다. 또한, [`pg_dump`](https://www.postgresql.org/docs/17/app-pgdump.html) 덤프 파일을 생성할 때 포함할 객체를 선택할 수 있는 새로운 옵션인 `--filter`를 포함하고 있습니다.
 
-PostgreSQL 17 also includes enhancements to monitoring and analysis features.
-[`EXPLAIN`](https://www.postgresql.org/docs/17/sql-explain.html) now shows the
-time spent for local I/O block reads and writes, and includes two new options:
-`SERIALIZE` and `MEMORY`, useful for seeing the time spent in data conversion
-for network transmission, and how much memory was used. PostgreSQL 17 now
-reports the [progress of vacuuming indexes](https://www.postgresql.org/docs/17/progress-reporting.html#VACUUM-PROGRESS-REPORTING),
-and adds the [`pg_wait_events`](https://www.postgresql.org/docs/17/view-pg-wait-events.html)
-system view that, when combined with [`pg_stat_activity`](https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-ACTIVITY-VIEW),
-gives more insight into why an active session is waiting.
+PostgreSQL 17은 모니터링 및 분석 기능이 향상되었습니다. 이제 [`EXPLAIN`](https://www.postgresql.org/docs/17/sql-explain.html)은 로컬 I/O 블록 읽기 및 쓰기에 소요된 시간을 보여주며, 데이터 변환시 네트워크 전송에 소요된 시간과 사용된 메모리 양을 확인할 수 있는 두 가지 새로운 옵션인 `SERIALIZE`와 `MEMORY`를 추가했습니다.또한 PostgreSQL 17은 [인덱스 vacuum 진행상황](https://www.postgresql.org/docs/17/progress-reporting.html#VACUUM-PROGRESS-REPORTING)을 보고하며,
+[`pg_wait_events`](https://www.postgresql.org/docs/17/view-pg-wait-events.html) 시스템 뷰를 추가했습니다. 해당 뷰는 
+[`pg_stat_activity`](https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-ACTIVITY-VIEW)와 결합하여 액티브 세션이 대기하는 원인에 대한 더 많은 정보를 제공합니다.
 
-### Additional Features
+### 추가 변경 사항
 
-Many other new features and improvements have been added to PostgreSQL 17 that
-may also be helpful for your use cases. Please see the
-[release notes](https://www.postgresql.org/docs/17/release-17.html) for a
-complete list of new and changed features.
+PostgreSQL 17에는 다음과 같이 여러 사용 사례에 도움될 수 있는 여러 새로운 기능과 개선 사항이 추가되었습니다.
+새로운 기능 및 변경된 기능의 전체 목록은 [release notes](https://www.postgresql.org/docs/17/release-17.html)에서 확인할 수 있습니다.
 
-### About PostgreSQL
+### PostgreSQL 정보
+[PostgreSQL](https://www.postgresql.org) 은 수천 명의 사용자, 기여자, 회사 및 조직의 세계적인 커뮤니티를 보유한 세계 최고 수준의오픈 소스 데이터베이스입니다. 캘리포니아, 버클리 대학교를 시작으로 35년 이상의 엔지니어링 기반으로 구축된 PostgreSQL은 타의 추종을 불허하는 속도로 계속 발전해왔습니다. PostgreSQL의 완성도 높은 기능들은 상용 데이터베이스 시스템과 거의 같으며, 확장성, 보안 및 안정성 측면에서도 뛰어납니다.
 
-[PostgreSQL](https://www.postgresql.org) is the world's most advanced open
-source database, with a global community of thousands of users, contributors,
-companies and organizations. Built on over 35 years of engineering, starting at
-the University of California, Berkeley, PostgreSQL has continued with an
-unmatched pace of development. PostgreSQL's mature feature set not only matches
-top proprietary database systems, but exceeds them in advanced database
-features, extensibility, security, and stability.
-
-### Links
+### 링크
 
 * [Download](https://www.postgresql.org/download/)
 * [Release Notes](https://www.postgresql.org/docs/17/release-17.html)
@@ -170,29 +134,28 @@ features, extensibility, security, and stability.
 * [Follow @postgresql](https://twitter.com/postgresql)
 * [Donate](https://www.postgresql.org/about/donate/)
 
-## More About the Features
+## 기능에 대해 자세히 알아보기
 
-For explanations of the above features and others, please see the following
-resources:
+기능 및 기타사항에 대한 설명은 다음을 참조하시기 바랍니다. 
+리소스:
 
 * [Release Notes](https://www.postgresql.org/docs/17/release-17.html)
 * [Feature Matrix](https://www.postgresql.org/about/featurematrix/)
 
-## Where to Download
+## 다운로드할 위치
 
-There are several ways you can download PostgreSQL 17, including:
+PostgreSQL 17을 다운로드할 수 있는 방법은 다음과 같습니다:
 
-* The [Official Downloads](https://www.postgresql.org/download/) page, with contains installers and tools for [Windows](https://www.postgresql.org/download/windows/), [Linux](https://www.postgresql.org/download/linux/), [macOS](https://www.postgresql.org/download/macosx/), and more.
-* [Source Code](https://www.postgresql.org/ftp/source/v17.0)
+* The [공식 다운로드](https://www.postgresql.org/download/) 페이지에는 [Windows](https://www.postgresql.org/download/windows/), [Linux](https://www.postgresql.org/download/linux/), [macOS](https://www.postgresql.org/download/macosx/)등의 설치 프로그램이 포함되어 있습니다.
+* [소스코드](https://www.postgresql.org/ftp/source/v17.0)
 
-Other tools and extensions are available on the
-[PostgreSQL Extension Network](http://pgxn.org/).
+기타 도구 및 확장 모듈은 [PostgreSQL Extension Network](http://pgxn.org/) 에서 확인하시면 됩니다.
 
-## Documentation
+## 문서
 
-PostgreSQL 17 comes with HTML documentation as well as man pages, and you can also browse the documentation online in both [HTML](https://www.postgresql.org/docs/17/) and [PDF](https://www.postgresql.org/files/documentation/pdf/17/postgresql-17-US.pdf) formats.
+PostgreSQL 17 HTML 문서와 man 페이지가 함께 제공되며, 온라인 브라우저에서 [HTML](https://www.postgresql.org/docs/17/)양식과 [PDF](https://www.postgresql.org/files/documentation/pdf/17/postgresql-17-US.pdf) 양식도 제공합니다.
 
-## Licence
+## 라이센스
 
 PostgreSQL uses the [PostgreSQL License](https://www.postgresql.org/about/licence/),
 a BSD-like "permissive" license. This
