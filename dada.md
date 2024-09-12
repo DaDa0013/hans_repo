@@ -98,7 +98,7 @@ sorting semantics to the `C` collation except with `UTF-8` encoding rather than
 `SQL_ASCII`. Using this new collation provider guarantees that your text-based
 queries will return the same sorted results regardless of where you run
 PostgreSQL.
--------------------------------------------
+
 
 ### 고가용성과 주요 버전 업그레이드를 위한 논리적 복제의 향상된 기능들
 
